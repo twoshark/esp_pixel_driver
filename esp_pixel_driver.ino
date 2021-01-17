@@ -58,7 +58,9 @@ void loop()
 void setup_wifi()
 {
   WiFi.begin(WIFI_SSID, PASSWORD);
+  #ifdef ESP32
   WiFi.setSleep(false);
+  #endif
   WiFi.config(ip, gateway, subnet);
   int loop_limit = 30;
   int count = 0;

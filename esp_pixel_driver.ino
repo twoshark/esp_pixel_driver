@@ -52,8 +52,7 @@ void setup()
   init_config();
 
   //LED Init
-  CRGB ledArray[config.strip_length];
-  memset(leds, 0, sizeof ledArray);
+  leds = (CRGB *) malloc(sizeof(CRGB) * config.strip_length);
   FastLED.addLeds<WS2812, OUTPUT_PIN, RGB>(leds, config.strip_length);
 
   //Status - Connecting to Wifi
@@ -99,7 +98,7 @@ void init_config()
   channels = 3 * config.strip_length;
   maxUniverses = channels / 512 + ((channels % 512) ? 1 : 0);
   bool received[maxUniverses];
-  memset(universesReceived, 0, sizeof received);
+  universesReceived = (bool *) malloc(sizeof(bool) * maxUniverses);
 
   //Save
   memory.Save(config);

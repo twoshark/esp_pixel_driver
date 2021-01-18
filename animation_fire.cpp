@@ -13,17 +13,10 @@
 
 CRGBPalette16 palette;
 
-Animations::Animations(){}
-
-Animations::Animations(Configuration *config, CRGB *leds){
-  this->config = config;
-  this->leds = leds;
-  this->heat = (byte*)malloc(sizeof(byte)*this->config->strip_length);
-}
-
-void Animations::Fire()
+void Animation::Fire()
 {
   static const int pixels = this->config->strip_length;
+  static byte *heat = (byte*)malloc(sizeof(byte)*this->config->strip_length);
 
   // Step 1.  Cool down every cell a little
     for( int i = 0; i < pixels; i++) {

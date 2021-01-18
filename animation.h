@@ -4,11 +4,11 @@
 #include "config.h"
 #include <FastLED.h>
 
-class Animations
+class Animation
 {
 public:
-  Animations();
-  Animations(Configuration *config, CRGB *leds);
+  Animation();
+  Animation(Configuration *config, CRGB *leds);
   void Fire();
 
 private:

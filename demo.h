@@ -13,7 +13,7 @@ public:
 
 private:
   Configuration *config;
-  Animations animations;
+  Animation animations;
 };
 
 #endif

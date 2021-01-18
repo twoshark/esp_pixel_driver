@@ -5,7 +5,7 @@ DemoManager::DemoManager()
 DemoManager::DemoManager(Configuration *config, CRGB *leds)
 {
   this->config = config;
-  this->animations = Animations(this->config, leds);
+  this->animations = Animation(this->config, leds);
 }
 
 void DemoManager::Run()

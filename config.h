@@ -1,8 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// TODO: replace with Wifi manger form config
-
 #include "enums.h"
 #include <Arduino.h>
 

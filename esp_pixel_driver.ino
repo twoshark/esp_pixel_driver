@@ -19,7 +19,7 @@
 #include "pixel_server.h"
 
 //LEDs
-CRGB leds[1];
+CRGB *leds;
 
 Configuration config;
 
@@ -32,7 +32,7 @@ int maxUniverses;
 
 //DMX Handler Globals
 ArtnetWifi artnet;
-bool universesReceived[1];
+bool *universesReceived;
 bool sendFrame = 1;
 int previousDataLength = 0;
 
@@ -53,7 +53,7 @@ void setup()
 
   //LED Init
   CRGB ledArray[config.strip_length];
-  memset(&leds, 0, sizeof ledArray);
+  memset(leds, 0, sizeof ledArray);
   FastLED.addLeds<WS2812, OUTPUT_PIN, RGB>(leds, config.strip_length);
 
   //Status - Connecting to Wifi

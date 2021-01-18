@@ -3,24 +3,24 @@
 void Configuration::applyOverrides()
 {
 #ifdef NAME
-  config.name = NAME;
+  this->name = NAME;
 #endif
 #ifdef DESCRIPTION
-  config.descripton = DESCRIPTION;
+  this->descripton = DESCRIPTION;
 #endif
 #ifdef DEBUG_LOGS
-  config.debug_logs = DEBUG_LOGS;
+  this->debug_logs = DEBUG_LOGS;
 #endif
 #ifdef OUTPUT_LEDS
-  config.output_leds = OUTPUT_LEDS;
+  this->output_leds = OUTPUT_LEDS;
 #endif
 #ifdef STRIP_LENGTH
-  config.name = STRIP_LENGTH;
+  this->strip_length = STRIP_LENGTH;
 #endif
 #ifdef START_UNIVERSE
-  config.name = START_UNIVERSE;
+  this->start_address = START_UNIVERSE;
 #endif
 #ifdef CHANNEL_OFFSET
-  config.name = CHANNEL_OFFSET;
+  this->channel_offset = CHANNEL_OFFSET;
 #endif
 }

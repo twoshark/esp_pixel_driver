@@ -15,7 +15,7 @@ class PixelServer
 {
 public:
   Configuration *config;
-  void Listen(Configuration config);
+  void Listen();
   void begin();
 };
 

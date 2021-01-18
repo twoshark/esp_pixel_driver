@@ -73,7 +73,7 @@ void setup()
 
 void loop()
 {
-  pixel_server.Listen(config);
+  pixel_server.Listen();
   artnet.read();
   delay(5);
 }

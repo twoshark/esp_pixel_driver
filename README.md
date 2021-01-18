@@ -44,6 +44,7 @@ Configuration values may be preconfigured by setting any of the following values
 | Parameter                 | Variable                  | Type   | Notes                             |
 | ------------------------- | ------------------------- | ------ | --------------------------------- |
 | Disable WifiManager Setup | DISABLE_WIFIMANAGER_SETUP | --     | `#define` to activate             |
+| Enable Demo Animations    | ENABLE_DEMO_ANIMATIONS    | --     | `#define` to activate             |
 | Serial Log Level          | DEBUG_LOGS                | bool   | Activating may impact performance |
 | Enable LED Output         | OUTPUT_LEDS               | bool   |                                   |
 | LED Strip Length          | STRIP_LENGTH              | int    |                                   |

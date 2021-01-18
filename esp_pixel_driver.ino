@@ -17,7 +17,7 @@
 #include "memory.h"
 #include "wifimanager_adapter.h"
 #include "pixel_server.h"
-
+#include "demo.h"
 //LEDs
 CRGB *leds;
 
@@ -35,6 +35,9 @@ ArtnetWifi artnet;
 bool *universesReceived;
 bool sendFrame = 1;
 int previousDataLength = 0;
+bool dmxReceived;
+
+DemoManager demoManager;
 
 //Network Config
 const IPAddress ip(192, 168, 1, 200);
@@ -52,8 +55,10 @@ void setup()
   init_config();
 
   //LED Init
-  leds = (CRGB *) malloc(sizeof(CRGB) * config.strip_length);
+  leds = (CRGB *)malloc(sizeof(CRGB) * config.strip_length);
   FastLED.addLeds<WS2812, OUTPUT_PIN, RGB>(leds, config.strip_length);
+
+  demoManager = DemoManager(&config, leds);
 
   //Status - Connecting to Wifi
   status(0);
@@ -70,11 +75,17 @@ void setup()
   delay(500);
 }
 
+#define ENABLE_DEMO_ANIMATIONS
+
 void loop()
 {
+  //handle web requests
   pixel_server.Listen();
+  //listen for artnet
   artnet.read();
-  delay(5);
+#ifdef ENABLE_DEMO_ANIMATIONS
+  demoManager.Run();
+#endif
 }
 
 void init_config()
@@ -98,7 +109,7 @@ void init_config()
   channels = 3 * config.strip_length;
   maxUniverses = channels / 512 + ((channels % 512) ? 1 : 0);
   bool received[maxUniverses];
-  universesReceived = (bool *) malloc(sizeof(bool) * maxUniverses);
+  universesReceived = (bool *)malloc(sizeof(bool) * maxUniverses);
 
   //Save
   memory.Save(config);

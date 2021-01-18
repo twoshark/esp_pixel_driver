@@ -16,7 +16,6 @@ public:
   uint32_t ip;
   uint32_t gateway;
   uint32_t subnet;
-  int output_pin;
   int strip_length;
   int start_universe;
   int channel_offset;
@@ -26,6 +25,8 @@ public:
 };
 
 /*
+
+
 //override with static values
 #define STATIC_CONFIG_OVERRIDES
 

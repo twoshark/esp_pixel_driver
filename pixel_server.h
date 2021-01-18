@@ -14,9 +14,7 @@
 class PixelServer
 {
 public:
-  /**
-   * Listen - check for and serve clients
-   */
+  Configuration *config;
   void Listen(Configuration config);
   void begin();
 };

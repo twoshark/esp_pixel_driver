@@ -1,4 +1,5 @@
 #include "pixel_server.h"
+#include "wifimanager_adapter.h"
 
 WiFiServer server(80);
 
@@ -12,7 +13,7 @@ void PixelServer::begin()
  * Server - Listen
  * 
  */
-void PixelServer::Listen(Configuration config)
+void PixelServer::Listen()
 {
   String header;
   WiFiClient client = server.available(); // Listen for incoming clients
@@ -46,7 +47,8 @@ void PixelServer::Listen(Configuration config)
             // turns the GPIOs on and off
             if (header.indexOf("GET /reconfigure") >= 0)
             {
-              //todo: start wm portal
+              WifiManagerAdapter wma;
+              wma.setup(config);
             }
 
             // Display the HTML web page

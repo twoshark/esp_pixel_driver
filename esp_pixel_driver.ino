@@ -10,16 +10,25 @@
 #include <WiFi.h>
 #endif
 
+#include <ArduinoJson.h>
+#include <EEPROM.h>
+
+#include "config.h"
+#include "memory.h"
+#include "wifimanager_adapter.h"
+
 //LEDs
-CRGB leds[STRIP_LENGTH];
+CRGB leds[1];
+
+Configuration config;
 
 //Calculated Constants
-const int channels = STRIP_LENGTH * 3;
-const int maxUniverses = channels / 512 + ((channels % 512) ? 1 : 0);
+int channels;     //= STRIP_LENGTH * 3
+int maxUniverses; // = channels / 512 + ((channels % 512) ? 1 : 0)
 
 //DMX Handler Globals
 ArtnetWifi artnet;
-bool universesReceived[maxUniverses];
+bool universesReceived[1];
 bool sendFrame = 1;
 int previousDataLength = 0;
 
@@ -30,8 +39,13 @@ const IPAddress subnet(255, 255, 255, 0);
 
 void setup()
 {
+  //Load Config from memory, apply static overrides, and run wm setup
+  init_config();
+
   //LED Init
-  FastLED.addLeds<WS2812, OUTPUT_PIN, RGB>(leds, STRIP_LENGTH);
+  CRGB ledArray[config.strip_length];
+  std:memset(&leds, 0, sizeof ledArray);
+  FastLED.addLeds<WS2812, OUTPUT_PIN, RGB>(leds, config.strip_length);
 
   //Serial Start
   Serial.begin(115200);
@@ -57,10 +71,15 @@ void loop()
 
 void setup_wifi()
 {
+#ifdef WIFI_SSID
   WiFi.begin(WIFI_SSID, PASSWORD);
-  #ifdef ESP32
+#else
+  WiFi.begin();
+#endif
+
+#ifdef ESP32
   WiFi.setSleep(false);
-  #endif
+#endif
   WiFi.config(ip, gateway, subnet);
   int loop_limit = 30;
   int count = 0;
@@ -84,16 +103,16 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *d
   sendFrame = 1;
 
   // Mark received Universe
-  if ((universe - START_UNIVERSE) < maxUniverses)
+  if ((universe - config.start_universe) < maxUniverses)
   {
-    universesReceived[universe - START_UNIVERSE] = 1;
+    universesReceived[universe - config.start_universe] = 1;
   }
 
   for (int i = 0; i < maxUniverses; i++)
   {
     if (universesReceived[i] == 0)
     {
-      // if we're missing an expected universe, do not playback 
+      // if we're missing an expected universe, do not playback
       sendFrame = 0;
       break;
     }
@@ -102,8 +121,8 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *d
   // read universe and put into the right part of the display buffer
   for (int i = 0; i < length / 3; i++)
   {
-    int led = i + (universe - START_UNIVERSE) * (previousDataLength / 3);
-    if (led < STRIP_LENGTH && OUTPUT_MODE == OUTPUT_MODE_LED)
+    int led = i + (universe - config.start_universe) * (previousDataLength / 3);
+    if (led < config.strip_length && config.output_leds)
     {
       leds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
       debug_led_output(i, data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
@@ -121,7 +140,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *d
 
 void status(uint8_t state)
 {
-  for (int i = 0; i < STRIP_LENGTH; i++)
+  for (int i = 0; i < config.strip_length; i++)
   {
     uint8_t g = 0;
     uint8_t r = 0;
@@ -142,13 +161,13 @@ void status(uint8_t state)
       break;
     }
 
-    if (OUTPUT_MODE == OUTPUT_MODE_LED)
+    if (config.output_leds)
     {
       leds[i] = CRGB(r, g, b);
     }
     debug_led_output(i, r, g, b);
   }
-  if (OUTPUT_MODE == OUTPUT_MODE_LED)
+  if (config.output_leds)
   {
     delay(500);
     FastLED.show();
@@ -157,7 +176,7 @@ void status(uint8_t state)
 
 void debug_led_output(int i, uint8_t r, uint8_t g, uint8_t b)
 {
-  if (LOG_LEVEL == LOG_LEVEL_DEBUG)
+  if (config.debug_logs)
   {
     char buf[16]; //formatting buffer
     sprintf(buf, "Pixel ID: %u", i);
@@ -172,4 +191,29 @@ void debug_led_output(int i, uint8_t r, uint8_t g, uint8_t b)
     sprintf(buf, "~~Blue: %u", b);
     Serial.println(buf);
   }
+}
+
+void init_config()
+{
+  Memory memory;
+  WifiManagerAdapter wm;
+
+  //Load Config From Memory
+  config = memory.Load();
+
+  //Apply Overrides
+  config.applyOverrides();
+
+  //TODO: Use an input to trigger the portal and
+  // default to starting up from saved data
+  //For now, always run the wm portal
+  wm.setup(&config);
+
+  channels = 3 * config.strip_length;
+  maxUniverses = channels / 512 + ((channels % 512) ? 1 : 0);
+  bool received[maxUniverses];
+  memset(universesReceived,0,sizeof received);
+
+  //Save
+  memory.Save(config);
 }

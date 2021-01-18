@@ -4,23 +4,47 @@
 // TODO: replace with Wifi manger form config
 
 #include "enums.h"
+#include <Arduino.h>
 
-#define OUTPUT_MODE OUTPUT_MODE_LED
 #define OUTPUT_PIN 17
+
+class Configuration
+{
+public:
+  char *name;
+  char *description;
+  uint32_t ip;
+  uint32_t gateway;
+  uint32_t subnet;
+  int output_pin;
+  int strip_length;
+  int start_universe;
+  int channel_offset;
+  bool debug_logs;
+  bool output_leds;
+  void applyOverrides();
+};
+
+/*
+//override with static values
+#define STATIC_CONFIG_OVERRIDES
+
+#define NAME "Pixel Driver Deluxe"
+#define DESCRIPTION "ESP Pixel Driver"
+
+#define OUTPUT_LEDS true
+#define OUTPUT_PIN 7
 #define STRIP_LENGTH 250
 
 // Pixel Mapped Output Configuration
 #define START_UNIVERSE 1 //DMX Universe to listen in
 #define CHANNEL_OFFSET 0 //DMX Start Channel
 
-#define LOG_LEVEL LOG_LEVEL_STANDARD // 0: normal, 1: debug
+#define DEBUG_LOGS false 
 
-//Must define:
-/*
-#define WIFI_SSID "hfsjdkf"
-#define PASSWORD "sdjfhdskjfn"
+//#define WIFI_SSID "hfsjdkf"
+//#define PASSWORD "sdjfhdskjfn"
+
 */
-#include "secret.h"
 
 #endif
- 

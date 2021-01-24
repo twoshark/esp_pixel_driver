@@ -1,3 +1,4 @@
+#define ESP32
 #include "config.h"
 #include <Arduino.h>
 #include <ArtnetWifi.h>
@@ -56,6 +57,11 @@ void setup()
 
   //LED Init
   leds = (CRGB *)malloc(sizeof(CRGB) * config.strip_length);
+  if (!leds){
+    Serial.println("Failed to allocate memory for LED Array. Reduce Strip Length.");
+    Serial.println("Returning to Configuration Portal...");
+    ActivateConfigurationPortal();
+  }
   FastLED.addLeds<WS2812, OUTPUT_PIN, RGB>(leds, config.strip_length);
 
   demoManager = DemoManager(&config, leds);
@@ -91,7 +97,6 @@ void loop()
 void init_config()
 {
   Memory memory;
-  WifiManagerAdapter wm;
 
   //Load Config From Memory
   config = memory.Load();
@@ -99,10 +104,7 @@ void init_config()
   //Apply Overrides
   config.applyOverrides();
 
-  //TODO: Use an input to trigger the portal and
-  // default to starting up from saved data
-  //For now, always run the wm portal
-  wm.setup(&config);
+  ActivateConfigurationPortal();
 
   pixel_server.config = &config;
 
@@ -111,8 +113,17 @@ void init_config()
   bool received[maxUniverses];
   universesReceived = (bool *)malloc(sizeof(bool) * maxUniverses);
 
+
   //Save
   memory.Save(config);
+}
+
+void ActivateConfigurationPortal(){
+  //TODO: Use an input to trigger the portal and
+  // default to starting up from saved data
+  //For now, always run the wm portal
+  WifiManagerAdapter wm;
+  wm.setup(&config);
 }
 
 void setup_wifi()

@@ -4,8 +4,9 @@
 #include "enums.h"
 #include <Arduino.h>
 
+#define ENABLE_DEMO_ANIMATIONS
 #define OUTPUT_PIN 17
-//TODO: Determine true max strip length
+//TODO: Determine true max strip length for 8266 and 32
 #define MAX_STRIP_LENGTH 500
 
 class Configuration

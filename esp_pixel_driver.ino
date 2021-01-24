@@ -12,7 +12,6 @@
 
 #include <ArduinoJson.h>
 #include <EEPROM.h>
-#define MAX_STRIP_LENGTH
 #include "config.h"
 #include "memory.h"
 #include "wifimanager_adapter.h"
@@ -59,7 +58,7 @@ void setup()
   if (!leds){//failed malloc returns null
     Serial.println("Failed to allocate memory for LED Array. Reduce Strip Length.");
     Serial.println("Returning to Configuration Portal...");
-    ActivateConfigurationPortal();
+    WifiManagerAdapter::setup(&config);
   }
   FastLED.addLeds<WS2812, OUTPUT_PIN, RGB>(leds, config.strip_length);
 
@@ -79,8 +78,6 @@ void setup()
   artnet.setArtDmxCallback(onDmxFrame);
   delay(500);
 }
-
-#define ENABLE_DEMO_ANIMATIONS
 
 void loop()
 {
@@ -102,9 +99,9 @@ void init_config()
 
   //Apply Overrides
   config.applyOverrides();
-
-  ActivateConfigurationPortal();
-
+  #ifndef DISABLE_WIFIMANAGER_SETUP
+    WifiManagerAdapter::setup(&config);
+  #endif
   pixel_server.config = &config;
 
   channels = 3 * config.strip_length;
@@ -114,19 +111,11 @@ void init_config()
   if (!universesReceived){ //failed malloc returns null
     Serial.println("Failed to allocate memory for LED Array. Reduce Strip Length.");
     Serial.println("Returning to Configuration Portal...");
-    ActivateConfigurationPortal();
+    WifiManagerAdapter::setup(&config);
   }
 
   //Save
   memory.Save(config);
-}
-
-void ActivateConfigurationPortal(){
-  //TODO: Use an input to trigger the portal and
-  // default to starting up from saved data
-  //For now, always run the wm portal
-  WifiManagerAdapter wm;
-  wm.setup(&config);
 }
 
 void setup_wifi()

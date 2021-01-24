@@ -54,7 +54,7 @@ public:
 class WifiManagerAdapter
 {
 public:
-  void setup(Configuration *config);
+  static void setup(Configuration *config);
 };
 
 #endif

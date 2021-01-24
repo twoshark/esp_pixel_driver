@@ -47,8 +47,7 @@ void PixelServer::Listen()
             // turns the GPIOs on and off
             if (header.indexOf("GET /reconfigure") >= 0)
             {
-              WifiManagerAdapter wma;
-              wma.setup(config);
+              WifiManagerAdapter::setup(config);
             }
 
             // Display the HTML web page

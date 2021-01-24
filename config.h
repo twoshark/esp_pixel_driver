@@ -5,6 +5,7 @@
 #include <Arduino.h>
 
 #define OUTPUT_PIN 17
+#define MAX_STRIP_LENGTH 500
 
 class Configuration
 {

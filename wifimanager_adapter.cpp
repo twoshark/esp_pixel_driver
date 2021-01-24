@@ -80,9 +80,24 @@ void WifiManagerAdapter::setup(Configuration *config)
         Serial.println("Invalid or Missing Subnet.");
     }
 
-    config->strip_length = param_strip_length.getValue();
+    if (param_strip_length.getValue() >= MAX_STRIP_LENGTH)
+    {
+        config->strip_length = param_strip_length.getValue();
+
+        Serial.print("Subnet param: ");
+        Serial.println(subnet);
+    }
+    else
+    {
+        Serial.println("Invalid or Missing Subnet.");
+    }
+    
     config->start_universe = param_start_universe.getValue();
+
     config->channel_offset = param_channel_offset.getValue();
+
     config->debug_logs = param_debug_logs.getValue();
+
     config->output_leds = param_output_leds.getValue();
+
 }

@@ -1,4 +1,3 @@
-#define ESP32
 #include "config.h"
 #include <Arduino.h>
 #include <ArtnetWifi.h>
@@ -13,7 +12,7 @@
 
 #include <ArduinoJson.h>
 #include <EEPROM.h>
-
+#define MAX_STRIP_LENGTH
 #include "config.h"
 #include "memory.h"
 #include "wifimanager_adapter.h"

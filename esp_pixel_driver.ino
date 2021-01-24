@@ -57,7 +57,7 @@ void setup()
 
   //LED Init
   leds = (CRGB *)malloc(sizeof(CRGB) * config.strip_length);
-  if (!leds){
+  if (!leds){//failed malloc returns null
     Serial.println("Failed to allocate memory for LED Array. Reduce Strip Length.");
     Serial.println("Returning to Configuration Portal...");
     ActivateConfigurationPortal();
@@ -112,7 +112,11 @@ void init_config()
   maxUniverses = channels / 512 + ((channels % 512) ? 1 : 0);
   bool received[maxUniverses];
   universesReceived = (bool *)malloc(sizeof(bool) * maxUniverses);
-
+  if (!universesReceived){ //failed malloc returns null
+    Serial.println("Failed to allocate memory for LED Array. Reduce Strip Length.");
+    Serial.println("Returning to Configuration Portal...");
+    ActivateConfigurationPortal();
+  }
 
   //Save
   memory.Save(config);

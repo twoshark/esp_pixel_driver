@@ -5,7 +5,7 @@ void WifiManagerAdapter::setup(Configuration *config)
 {
     WiFiManager wm;
 
-    config->name[23] = '\0'; //overflow defense
+    config->name[23] = '\0';        //overflow defense
     config->description[47] = '\0'; //overflow defense
 
     WiFiManagerParameter param_name("Pixel Driver Name", "Pixel Driver Name", config->name, 24);
@@ -23,13 +23,12 @@ void WifiManagerAdapter::setup(Configuration *config)
     BoolParameter param_debug_logs("Enable Debug Log Output", "Enable Debug Log Output", config->debug_logs);
     BoolParameter param_output_leds("Enable LED Output", "Enable LED Output", config->output_leds);
 
-    
     wm.addParameter(&param_name);
     wm.addParameter(&param_description);
     wm.addParameter(&param_ip);
     wm.addParameter(&param_gateway);
     wm.addParameter(&param_subnet);
-    
+
     wm.addParameter(&param_strip_length);
     wm.addParameter(&param_start_universe);
     wm.addParameter(&param_channel_offset);
@@ -80,24 +79,64 @@ void WifiManagerAdapter::setup(Configuration *config)
         Serial.println("Invalid or Missing Subnet.");
     }
 
-    if (param_strip_length.getValue() >= MAX_STRIP_LENGTH)
+    if (param_strip_length.getValue() && (param_strip_length.getValue() > MAX_STRIP_LENGTH))
     {
         config->strip_length = param_strip_length.getValue();
 
-        Serial.print("Subnet param: ");
-        Serial.println(subnet);
+        Serial.println("Strip Length: ");
+        Serial.println(config->strip_length);
     }
     else
     {
-        Serial.println("Invalid or Missing Subnet.");
+
+        Serial.println("Strip Length: ");
+        Serial.println("Invalid or Missing.");
     }
-    
-    config->start_universe = param_start_universe.getValue();
 
-    config->channel_offset = param_channel_offset.getValue();
+    if (param_start_universe.getValue() && param_start_universe.getValue() >= 0)
+    {
+        config->start_universe = param_start_universe.getValue();
 
-    config->debug_logs = param_debug_logs.getValue();
+        Serial.println("Start Universe: ");
+        Serial.println(config->start_universe);
+    }
+    else
+    {
+
+        Serial.println("Start Universe: ");
+        Serial.println("Invalid or Missing.");
+    }
+
+    if (param_channel_offset.getValue() && param_channel_offset.getValue() >= 0 && param_channel_offset.getValue() < 512)
+    {
+        config->channel_offset = param_channel_offset.getValue();
+
+        Serial.println("Channel Offset: ");
+        Serial.println(config->channel_offset);
+    }
+    else
+    {
+        Serial.println("Channel Offset: ");
+        Serial.println("Invalid or Missing.");
+    }
 
     config->output_leds = param_output_leds.getValue();
-
+    if (config->output_leds)
+    {
+        Serial.println("LED Output: ACTIVE ");
+    }
+    else
+    {
+        Serial.println("LED Output: OFF ");
+    }
+    
+    config->debug_logs = param_debug_logs.getValue();
+    if (config->debug_logs)
+    {
+        Serial.println("Debug Output: ACTIVE ");
+    }
+    else
+    {
+        Serial.println("Debug Output: OFF ");
+    }
 }

@@ -5,17 +5,18 @@ void WifiManagerAdapter::setup(Configuration *config)
 {
     WiFiManager wm;
 
-    config->name[23] = '\0';        //overflow defense
-    config->description[47] = '\0'; //overflow defense
+    Serial.println("Before name");
+    
+    WiFiManagerParameter param_name("Pixel Driver Name", "Pixel Driver Name", "name", 24);
+    WiFiManagerParameter param_description("Description", "Description", "description", 48);
 
-    WiFiManagerParameter param_name("Pixel Driver Name", "Pixel Driver Name", config->name, 24);
-    WiFiManagerParameter param_description("Description", "Description", config->description, 48);
     IPAddress ip(config->ip);
     IPAddressParameter param_ip("ip", "Ip", ip);
     IPAddress gateway(config->gateway);
     IPAddressParameter param_gateway("gateway", "Gateway", gateway);
     IPAddress subnet(config->subnet);
     IPAddressParameter param_subnet("subnet", "Subnet", subnet);
+    Serial.println("After IPS");
 
     IntParameter param_strip_length("Strip Length", "Strip Length", config->strip_length);
     IntParameter param_start_universe("Start Universe", "Start Universe", config->start_universe);

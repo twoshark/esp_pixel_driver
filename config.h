@@ -12,8 +12,6 @@
 class Configuration
 {
 public:
-  char *name = "";
-  char *description = "";
   uint32_t ip;
   uint32_t gateway;
   uint32_t subnet;

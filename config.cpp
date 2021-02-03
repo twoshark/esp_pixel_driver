@@ -2,12 +2,6 @@
 
 void Configuration::applyOverrides()
 {
-#ifdef NAME
-  this->name = NAME;
-#endif
-#ifdef DESCRIPTION
-  this->descripton = DESCRIPTION;
-#endif
 #ifdef DEBUG_LOGS
   this->debug_logs = DEBUG_LOGS;
 #endif

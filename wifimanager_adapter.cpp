@@ -5,11 +5,6 @@ void WifiManagerAdapter::setup(Configuration *config)
 {
     WiFiManager wm;
 
-    Serial.println("Before name");
-    
-    WiFiManagerParameter param_name("Pixel Driver Name", "Pixel Driver Name", "name", 24);
-    WiFiManagerParameter param_description("Description", "Description", "description", 48);
-
     IPAddress ip(config->ip);
     IPAddressParameter param_ip("ip", "Ip", ip);
     IPAddress gateway(config->gateway);
@@ -19,13 +14,15 @@ void WifiManagerAdapter::setup(Configuration *config)
     Serial.println("After IPS");
 
     IntParameter param_strip_length("Strip Length", "Strip Length", config->strip_length);
+    
     IntParameter param_start_universe("Start Universe", "Start Universe", config->start_universe);
+    
     IntParameter param_channel_offset("DMX Channel Offset", "DMX Channel Offset", config->channel_offset);
+    
     BoolParameter param_debug_logs("Enable Debug Log Output", "Enable Debug Log Output", config->debug_logs);
+    
     BoolParameter param_output_leds("Enable LED Output", "Enable LED Output", config->output_leds);
-
-    wm.addParameter(&param_name);
-    wm.addParameter(&param_description);
+    
     wm.addParameter(&param_ip);
     wm.addParameter(&param_gateway);
     wm.addParameter(&param_subnet);
@@ -38,11 +35,6 @@ void WifiManagerAdapter::setup(Configuration *config)
 
     //SSID & password parameters already included
     wm.startConfigPortal();
-
-    strncpy(config->name, param_name.getValue(), 24);
-    config->name[23] = '\0';
-    strncpy(config->description, param_description.getValue(), 48);
-    config->name[47] = '\0';
 
     if (param_ip.getValue(ip))
     {

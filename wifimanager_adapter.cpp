@@ -1,4 +1,3 @@
-
 #include "wifimanager_adapter.h"
 
 void WifiManagerAdapter::setup(Configuration *config)
@@ -12,6 +11,8 @@ void WifiManagerAdapter::setup(Configuration *config)
     IPAddress subnet(config->subnet);
     IPAddressParameter param_subnet("subnet", "Subnet", subnet);
     Serial.println("After IPS");
+
+
 
     IntParameter param_strip_length("Strip Length", "Strip Length", config->strip_length);
     
@@ -72,7 +73,7 @@ void WifiManagerAdapter::setup(Configuration *config)
         Serial.println("Invalid or Missing Subnet.");
     }
 
-    if (param_strip_length.getValue() && (param_strip_length.getValue() > MAX_STRIP_LENGTH))
+    if (param_strip_length.getValue() && (param_strip_length.getValue() <= MAX_STRIP_LENGTH))
     {
         config->strip_length = param_strip_length.getValue();
 

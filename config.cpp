@@ -12,7 +12,7 @@ void Configuration::applyOverrides()
   this->strip_length = STRIP_LENGTH;
 #endif
 #ifdef START_UNIVERSE
-  this->start_address = START_UNIVERSE;
+  this->start_universe = START_UNIVERSE;
 #endif
 #ifdef CHANNEL_OFFSET
   this->channel_offset = CHANNEL_OFFSET;

@@ -35,7 +35,8 @@ bool *universesReceived;
 bool sendFrame = 1;
 int previousDataLength = 0;
 bool dmxReceived;
-
+int heartbeatCount = 0;
+int dmxHeartbeatCount = 0;
 DemoManager demoManager;
 
 //Network Config
@@ -55,7 +56,8 @@ void setup()
 
   //LED Init
   leds = (CRGB *)malloc(sizeof(CRGB) * config.strip_length);
-  if (!leds){//failed malloc returns null
+  if (!leds)
+  { //failed malloc returns null
     Serial.println("Failed to allocate memory for LED Array. Reduce Strip Length.");
     Serial.println("Returning to Configuration Portal...");
     WifiManagerAdapter::setup(&config);
@@ -88,6 +90,7 @@ void loop()
 #ifdef ENABLE_DEMO_ANIMATIONS
   demoManager.Run();
 #endif
+  globaleHeartbeat();
 }
 
 void init_config()
@@ -99,16 +102,17 @@ void init_config()
 
   //Apply Overrides
   config.applyOverrides();
-  #ifndef DISABLE_WIFIMANAGER_SETUP
-    WifiManagerAdapter::setup(&config);
-  #endif
+#ifndef DISABLE_WIFIMANAGER_SETUP
+  WifiManagerAdapter::setup(&config);
+#endif
   pixel_server.config = &config;
 
   channels = 3 * config.strip_length;
   maxUniverses = channels / 512 + ((channels % 512) ? 1 : 0);
   bool received[maxUniverses];
   universesReceived = (bool *)malloc(sizeof(bool) * maxUniverses);
-  if (!universesReceived){ //failed malloc returns null
+  if (!universesReceived)
+  { //failed malloc returns null
     Serial.println("Failed to allocate memory for LED Array. Reduce Strip Length.");
     Serial.println("Returning to Configuration Portal...");
     WifiManagerAdapter::setup(&config);
@@ -214,7 +218,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *d
     }
   }
   previousDataLength = length;
-
+  dmxHeartbeat();
   if (sendFrame)
   {
     FastLED.show();
@@ -239,5 +243,23 @@ void debug_led_output(int i, uint8_t r, uint8_t g, uint8_t b)
 
     sprintf(buf, "~~Blue: %u", b);
     Serial.println(buf);
+  }
+}
+
+void globaleHeartbeat()
+{
+  heartbeatCount++;
+  if (heartbeatCount >= HEARTBEAT_LIMIT_DEVICE)
+  {
+    heartbeatCount = 0;
+    Serial.println("Device Heartbeat");
+  }
+}
+void dmxHeartbeat(){
+  dmxHeartbeatCount++;
+  if (dmxHeartbeatCount >= HEARTBEAT_LIMIT_DMX)
+  {
+    dmxHeartbeatCount = 0;
+    Serial.println("DMX Heartbeat");
   }
 }
